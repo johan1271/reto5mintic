@@ -25,9 +25,7 @@ public class Main {
         ct.iniciar();
         
         
-        p.setId("2");
         
-        p.setNombre("culion");
         
         
     }

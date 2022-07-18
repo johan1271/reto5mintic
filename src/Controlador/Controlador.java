@@ -8,6 +8,7 @@ import Modelo.Producto;
 import Vista.GUI;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -22,6 +23,7 @@ public class Controlador implements ActionListener {
     
     private Producto producto;
     private GUI view;
+    private boolean b;
     
     DefaultTableModel tableModel = new DefaultTableModel();
 
@@ -45,6 +47,25 @@ public class Controlador implements ActionListener {
         
         
         CrearTabla();
+        
+        this.view.productsTable.addMouseListener(new MouseAdapter() {
+
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                if (e.getClickCount() == 1) {
+                    int fila = view.productsTable.getSelectedRow();
+                    
+                    view.idTf.setText((String) view.productsTable.getValueAt(fila, 0));
+                    view.nameTf.setText((String) view.productsTable.getValueAt(fila, 1));
+                    view.tempTf.setText((String) view.productsTable.getValueAt(fila, 2));
+                    view.vbTf.setText((String) view.productsTable.getValueAt(fila, 3));
+                    
+                    JOptionPane.showMessageDialog(null, fila);
+                    System.out.println("culioeros");
+                    
+                }
+            }
+        });
         
         
     }
@@ -70,6 +91,7 @@ public class Controlador implements ActionListener {
     }
     
     
+    
     public void limpiar() {
         view.nameTf.setText("");
         view.idTf.setText("");
@@ -93,42 +115,114 @@ public class Controlador implements ActionListener {
 
     }
     
-    @Override
-    public void actionPerformed(ActionEvent ae) {
-        if (ae.getSource() == view.saveBtn) {
+    
+    public boolean setProduct(){
+        boolean resp = false;
+        
+        if (view.idTf.getText().isEmpty() || view.nameTf.getText().isEmpty() || view.tempTf.getText().isEmpty() ||  view.vbTf.getText().isEmpty()) {
             
+            JOptionPane.showMessageDialog(null, "Por favor complete los campos");
+            
+            resp = false;
+        } else{
             producto.setId(view.idTf.getText());
             producto.setNombre(view.nameTf.getText());
             producto.setTemperatura(Double.parseDouble(view.tempTf.getText()));
             producto.setValorBase(Double.parseDouble(view.vbTf.getText()));
+            resp = true;
+        
+        }
+        
+        return resp;
+    } 
+    
+    public void check(){
+        if (producto.guardar(producto)) {
+            limpiar();
+            listar(producto);
+            JOptionPane.showMessageDialog(null, "Se guardó con exito");
+                
+                
+        } else {
             
+            JOptionPane.showMessageDialog(null, "error al guardado");
+            limpiar();
+        
+        }  
+    
+    }
+    
+    
+    
+    @Override
+    public void actionPerformed(ActionEvent ae) {
+        if (ae.getSource() == view.saveBtn) {
+            
+            
+            
+            
+            if (setProduct()) {
+                if (producto.guardar(producto) && producto.getId() != null) {
+                    limpiar();
+                    listar(producto);
+                    JOptionPane.showMessageDialog(null, "Se guardó con exito");
+
+                } else {
+                    JOptionPane.showMessageDialog(null, "error al guardado");
+
+                }
+            } 
+
             System.out.println(producto);
-            if (producto.guardar(producto)) {
-                limpiar();
-                listar(producto);
-                JOptionPane.showMessageDialog(null, "Se guardó con exito");
-                
-                
-            } else {
-                JOptionPane.showMessageDialog(null, "erro al guardado");
-                limpiar();
-            }
+            
             
             
             
         } else if (ae.getSource() == view.updateBtn) {
             
-            JOptionPane.showMessageDialog(null, "Se actualizo con exito");
+            
+            
+            if (setProduct()) {
+                if (producto.Editar(producto)) {
+                    limpiar();
+                    listar(producto);
+                    JOptionPane.showMessageDialog(null, "Se actualizó con exito");
+
+                } else {
+                    JOptionPane.showMessageDialog(null, "error al actualizar");
+
+                }
+            } 
+            
+            
+            
             
             
         } else if (ae.getSource() == view.deleteBtn) {
             
-            JOptionPane.showMessageDialog(null, "Se elimino con exito");
+            
+ 
+            setProduct();
+            
+            
+            
+            if (producto.eliminar(producto)) {
+                producto.setId(null);
+                limpiar();
+                listar(producto);
+                JOptionPane.showMessageDialog(null, "Se eliminó con exito");
+                
+                
+            } else {
+                JOptionPane.showMessageDialog(null, "error al eliminar");
+                limpiar();
+            }
             
             
         } else if (ae.getSource() == view.readBtn) {
-            limpiar();
             
+            
+            limpiar();
             listar(producto);
             
             
@@ -144,26 +238,12 @@ public class Controlador implements ActionListener {
                 JOptionPane.showMessageDialog(null, "error al buscar");
             }
             
-        } else if (ae.getSource() == view.productsTable) {
-            System.out.println("cylioneros");
-            int fila = view.productsTable.getSelectedRow();
-            
-            JOptionPane.showMessageDialog(null, fila);
-        }
+        } 
     
     
     }
     
-    public void productsTableMouseClicked(MouseEvent ae){
-        
-        if (ae.getSource() == view.productsTable) {
-            System.out.println("cylioneros");
-            int fila = view.productsTable.getSelectedRow();
-            
-            JOptionPane.showMessageDialog(null, fila);
-        }
     
-    }
     
     
     

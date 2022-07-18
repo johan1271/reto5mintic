@@ -85,9 +85,9 @@ public class Producto {
     public boolean guardar(Producto prod) {
         boolean resp = false;
         try {
-            System.out.println("si llego");
+            
             String sql = "insert into producto(id, nombre, temperatura, valorbase) values('" + prod.getId() + "','" + prod.getNombre() + "', '" + prod.getTemperatura() + "','" + prod.getValorBase()+ "')";
-            System.out.println("culion");
+            
             st = conn.createStatement();
             st.execute(sql);
             resp = true;
@@ -150,6 +150,7 @@ public class Producto {
         boolean resp = false;
         try {
             
+            System.out.println("clioncito");
             String sql = "DELETE FROM producto WHERE id ='" + produ.getId() + "'";
             st = conn.createStatement();
             st.execute(sql);
@@ -159,6 +160,33 @@ public class Producto {
             resp = false;
             System.out.println(e);
         }
+        return resp;
+    }
+    
+    public boolean Editar(Producto produ) {
+        boolean resp = false;
+        try {
+            
+            String sql = "update producto set nombre = '" + produ.getNombre()+ "',"
+                    + " temperatura ='" + produ.getTemperatura()+ "', valorbase= '" + produ.getValorBase() + "' WHERE id ='" + produ.getId() + "'";
+            st = conn.createStatement();
+            st.execute(sql);
+
+            resp = true;
+        } catch (Exception e) {
+            resp = false;
+            System.out.println(e);
+        }
+        return resp;
+    }
+    
+    public boolean validaciones(Producto prod){
+        boolean resp = false;
+        
+        if (prod.getId().equals(null)) {
+            
+        }
+        
         return resp;
     }
     
