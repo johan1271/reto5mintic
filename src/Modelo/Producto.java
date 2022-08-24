@@ -8,6 +8,7 @@ import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.Statement;
 import java.util.ArrayList;
+import javax.swing.JOptionPane;
 
 
 
@@ -21,17 +22,24 @@ public class Producto {
     private String id;
     private double temperatura;
     private double valorBase;
+    private double costo;
+    
     Connection conn = Conexion.getConnection();
     Statement st;
     ResultSet rs;
     
 
-    public Producto(String nombre, String id, double temperatura, double valorBase) {
+    public Producto(String nombre, String id, double temperatura, double valorBase, double costo) {
         this.nombre = nombre;
         this.id = id;
         this.temperatura = temperatura;
         this.valorBase = valorBase;
+        this.costo = costo;
     }
+
+    
+
+    
     
     
     public Producto(){
@@ -57,6 +65,9 @@ public class Producto {
         return valorBase;
     }
     
+    public double getCosto() {
+        return costo;
+    }
     
     //SETTERS
     public void setNombre(String nombre) {
@@ -75,6 +86,9 @@ public class Producto {
         this.valorBase = valorBase;
     }
     
+    public void setCosto(double costo) {
+        this.costo = costo;
+    }
     
     
     
@@ -82,11 +96,12 @@ public class Producto {
     
     
     
+    //METODO PARA GUARDAR UN PRODUCTO EN LA BASE DE DATOS
     public boolean guardar(Producto prod) {
         boolean resp = false;
         try {
             
-            String sql = "insert into producto(id, nombre, temperatura, valorbase) values('" + prod.getId() + "','" + prod.getNombre() + "', '" + prod.getTemperatura() + "','" + prod.getValorBase()+ "')";
+            String sql = "insert into producto(id, nombre, temperatura, valorbase, costo) values('" + prod.getId() + "','" + prod.getNombre() + "', '" + prod.getTemperatura() + "','" + prod.getValorBase()+ "','" + prod.getCosto()+ "')";
             
             st = conn.createStatement();
             st.execute(sql);
@@ -97,6 +112,7 @@ public class Producto {
         return resp;
     }
     
+    //METODO PARA CONSULTAR LOS PRODUCTOS EXISTENTES EN LA BASE DE DATOS
     public boolean buscar (Producto prod){
         boolean resp = false;
         
@@ -112,6 +128,7 @@ public class Producto {
         return resp;
     }
     
+    //METODO PARA LISTAR LOS PRODUCTOS CONSULTADOS EN UNA LISTA  EN LA BASE DE DATOS
     public ArrayList<Producto> consultar() {
         ArrayList<Producto> listProd = new ArrayList();
         
@@ -129,6 +146,7 @@ public class Producto {
                 prod.setNombre(rs.getString(2));
                 prod.setTemperatura(rs.getDouble(3));
                 prod.setValorBase(rs.getDouble(4));
+                prod.setCosto(rs.getDouble(5));
                 
                 
                 listProd.add(prod);
@@ -146,11 +164,12 @@ public class Producto {
         return listProd;
     }
     
+    //METODO PARA ELIMINAR UN PRODUCTO EN LA BASE DE DATOS
     public boolean eliminar(Producto produ) {
         boolean resp = false;
         try {
             
-            System.out.println("clioncito");
+            
             String sql = "DELETE FROM producto WHERE id ='" + produ.getId() + "'";
             st = conn.createStatement();
             st.execute(sql);
@@ -163,12 +182,13 @@ public class Producto {
         return resp;
     }
     
+    //METODO PARA ACTUALIZAR UN PRODUCTO DE LA BASE DE DATOS
     public boolean Editar(Producto produ) {
         boolean resp = false;
         try {
             
             String sql = "update producto set nombre = '" + produ.getNombre()+ "',"
-                    + " temperatura ='" + produ.getTemperatura()+ "', valorbase= '" + produ.getValorBase() + "' WHERE id ='" + produ.getId() + "'";
+                    + " temperatura ='" + produ.getTemperatura()+ "', valorbase= '" + produ.getValorBase() + "', costo= '" + produ.getCosto()+ "' WHERE id ='" + produ.getId() + "'";
             st = conn.createStatement();
             st.execute(sql);
 
@@ -180,20 +200,35 @@ public class Producto {
         return resp;
     }
     
-    public boolean validaciones(Producto prod){
+    //METODO PARA VALIDAR QUE UN PRODUCTO DE LA BASE DE DATOS YA EXISTE
+    public boolean existente(String nombre) {
         boolean resp = false;
-        
-        if (prod.getId().equals(null)) {
-            
+        try {
+            String sql = "select nombre from producto where nombre = '" + nombre + "'";
+            st = conn.createStatement();
+            rs = st.executeQuery(sql);
+            if (rs.next()) {
+                resp = true;
+            } else {
+                resp = false;
+            }
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
         }
-        
         return resp;
     }
-    
+
     @Override
     public String toString() {
-        return this.getClass().getName() + "{" + "nombre=" + nombre + ", id=" + id + ", temperatura=" + temperatura + ", valorBase=" + valorBase + '}';
+        return "Producto{" + "nombre=" + nombre + ", id=" + id + ", temperatura=" + temperatura + ", valorBase=" + valorBase + ", costo=" + costo + '}';
     }
+    
+    
+    
+    
+
+    
+    
            
     
 }

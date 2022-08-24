@@ -21,7 +21,7 @@ public class Conexion {
         try {
             Class.forName("org.sqlite.JDBC");
             // conectarme a la base de datos
-            // con = DriverManager.getConnection("jdbc:sqlite:e:\\bdd\\baseventas.db");
+            
             con = DriverManager.getConnection("jdbc:sqlite:reto5.db");
 
         } catch (SQLException e) {

@@ -7,6 +7,8 @@ package Main;
 import Controlador.Controlador;
 import Modelo.Conexion;
 import Modelo.Producto;
+import Modelo.ProductoNoRefrigerado;
+import Modelo.ProductoRefrigerado;
 import Vista.GUI;
 import com.sun.jdi.connect.spi.Connection;
 
@@ -17,11 +19,11 @@ import com.sun.jdi.connect.spi.Connection;
 public class Main {
     public static void main(String[] args) throws Exception {
         Producto p= new Producto();
-        
-        Producto p1 = new Producto("1","3",4.0,4.5);
+        ProductoNoRefrigerado pN= new ProductoNoRefrigerado();
+        ProductoRefrigerado pR= new ProductoRefrigerado();
         GUI view = new GUI();
         
-        Controlador ct = new Controlador(p, view);
+        Controlador ct = new Controlador(p, pN, pR,view);
         ct.iniciar();
         
         
